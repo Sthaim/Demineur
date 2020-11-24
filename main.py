@@ -5,12 +5,16 @@ def affichage(tab):
         print(i)
 
 def choose(tab,tabSol):
-    ligne=input("ligne")
-    colonne=input("colonne")
+    ligne=int(input("ligne"))
+    colonne=int(input("colonne"))
     tab[ligne][colonne]=tabSol[ligne][colonne]
     if tabSol[ligne][colonne]==0:
         plusieursCase(tab,tabSol,ligne,colonne)
-    
+    if tabSol[ligne][colonne]==9:
+        defaite()
+
+def defaite():
+    print("Vous avez activer une bombe! Perdu")    
 
 def plusieursCase(tab,tabSol,ligne,colonne):
     for i in range(3):
