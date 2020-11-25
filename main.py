@@ -2,9 +2,12 @@ import random
 import tkinter as tk
 from functools import partial
 
-def choose(tab,tabSol,ligne,colonne,root):
+def choose(tab,tabSol,ligne,colonne,tLigne,tColonne,root):
+    global first
+    if first==1:
+        first=0
+        createTabSolution(tabSol,ligne,colonne,tLigne,tColonne)
     tab[ligne][colonne].config(text=tabSol[ligne][colonne])
-    print(ligne,colonne)
     # tabSol[ligne][colonne]
     if tabSol[ligne][colonne]==0:
         plusieursCase(tab,tabSol,ligne,colonne)
@@ -21,6 +24,7 @@ def defaite(tabBomb,tabRes,root):
     popup.geometry("200x200")
     yup=tk.Button(popup,text="Vous avez activer une bombe!"+" Perdu",command=lambda:[root.destroy(),popup.destroy()])
     yup.pack()
+
 def plusieursCase(tab,tabSol,ligne,colonne):
     for i in range(3):
         a=i-1
@@ -37,12 +41,18 @@ def plusieursCase(tab,tabSol,ligne,colonne):
                 pass    
 
 def createBoard(tLigne,tColonne,tabBomb,tabRes,frame,root):
-    maxBomb=int((tLigne*tColonne)/3)
     for ligne in range(tLigne):
         tabBomb.append([])
-        tabRes.append([])
         for colonne in range(tColonne):
             tabBomb[ligne].append(colonne)
+            tabBomb[ligne][colonne]=tk.Button(frame,text="X",command=partial(choose,tabBomb,tabRes,ligne,colonne,tLigne,tColonne,root),width=5)
+            tabBomb[ligne][colonne].grid(column=colonne, row=ligne)
+            
+def createTabSolution(tabRes,ligne,colonne,tLigne,tColonne):
+    maxBomb=int((tLigne*tColonne)/4)
+    for ligne in range(tLigne):
+        tabRes.append([])
+        for colonne in range(tColonne):
             tabRes[ligne].append(colonne)
             if random.randint(0,4) == 1 and maxBomb>0:
                 # print("saucisse")
@@ -50,9 +60,7 @@ def createBoard(tLigne,tColonne,tabBomb,tabRes,frame,root):
                 maxBomb-=1
             else:
                 tabRes[ligne][colonne]=0
-            
-            tabBomb[ligne][colonne]=tk.Button(frame,text="X",command=partial(choose,tabBomb,tabRes,ligne,colonne,root),width=5)
-            tabBomb[ligne][colonne].grid(column=colonne, row=ligne)
+    
     for ligne in range(tLigne):
         for colonne in range(tColonne):
             if tabRes[ligne][colonne]==9:
@@ -65,15 +73,13 @@ def createBoard(tLigne,tColonne,tabBomb,tabRes,frame,root):
                                 tabRes[ligne+a][colonne+b]+=1
                 except (IndexError):
                     pass 
-            
-
 
 root = tk.Tk()
 frame = tk.Frame(root)
 frame.pack()
 frame.grid(row=0,column=0)
 
-
+first=1
 tabDem=[]
 tabSol=[]
 loose=0
