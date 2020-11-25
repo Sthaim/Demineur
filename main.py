@@ -1,40 +1,34 @@
 import random
 import tkinter as tk
+from functools import partial
 
-def affichage(tab):
-    print("  [1]   [2]  [3]   [4]   [5]   [6]   [7]   [8]   [9]   [10]")
-    nLigne=1
-    for i in tab:
-        print(nLigne,i)
-        nLigne+=1
-
-def choose(tab,tabSol):
-    ligne=int(input("ligne"))-1
-    colonne=int(input("colonne"))-1
+def choose(tab,tabSol,ligne,colonne,root):
     tab[ligne][colonne].config(text=tabSol[ligne][colonne])
+    print(ligne,colonne)
+    # tabSol[ligne][colonne]
     if tabSol[ligne][colonne]==0:
         plusieursCase(tab,tabSol,ligne,colonne)
     if tabSol[ligne][colonne]==9:
-        defaite(tabSol,tab)
-        return 1
-    return 0
+        defaite(tabSol,tab,root)
 
-def defaite(tabRes,tabBomb):
+def defaite(tabBomb,tabRes,root):
     for ligne in range(len(tabRes)):
         for colonne in range(len(tabRes)):
             if tabRes[ligne][colonne]==9:
-                tabBomb[ligne][colonne]=tabRes[ligne][colonne]
-    affichage(tabBomb)
+                tabBomb[ligne][colonne].config(text=str(tabRes[ligne][colonne]))
     print("Vous avez activer une bombe! Perdu")
-
+    popup = tk.Tk()
+    popup.geometry("200x200")
+    yup=tk.Button(popup,text="Vous avez activer une bombe!"+" Perdu",command=lambda:root.destroy())
+    yup.pack()
 def plusieursCase(tab,tabSol,ligne,colonne):
     for i in range(3):
         a=i-1
         for j in range(3):
             b=j-1
             try:
-                if ligne+a!=-1 and colonne+b!=-1 and tab[ligne+a][colonne+b]!=tabSol[ligne+a][colonne+b]:
-                    tab[ligne+a][colonne+b]=tabSol[ligne+a][colonne+b]
+                if ligne+a!=-1 and colonne+b!=-1 and tab[ligne+a][colonne+b].cget("text")!=str(tabSol[ligne+a][colonne+b]):
+                    tab[ligne+a][colonne+b].config(text=str(tabSol[ligne+a][colonne+b]))
                     if tabSol[ligne+a][colonne+b]==0:
                         plusieursCase(tab,tabSol,ligne+a,colonne+b)
                     # if tabSol[ligne+a][colonne+b]==9:
@@ -42,7 +36,7 @@ def plusieursCase(tab,tabSol,ligne,colonne):
             except (IndexError,RuntimeError):
                 pass    
 
-def createBoard(tLigne,tColonne,tabBomb,tabRes,frame):
+def createBoard(tLigne,tColonne,tabBomb,tabRes,frame,root):
     maxBomb=int((tLigne*tColonne)/3)
     for ligne in range(tLigne):
         tabBomb.append([])
@@ -56,9 +50,11 @@ def createBoard(tLigne,tColonne,tabBomb,tabRes,frame):
                 maxBomb-=1
             else:
                 tabRes[ligne][colonne]=0
-            tabBomb[ligne][colonne]= "X"
             
+            tabBomb[ligne][colonne]=tk.Button(frame,text="X",command=partial(choose,tabBomb,tabRes,ligne,colonne,root),width=5)
+            tabBomb[ligne][colonne].grid(column=colonne, row=ligne)
 
+            
     for ligne in range(tLigne):
         for colonne in range(tColonne):
             if tabRes[ligne][colonne]==9:
@@ -77,19 +73,17 @@ root = tk.Tk()
 frame = tk.Frame(root)
 frame.pack()
 frame.grid(row=0,column=0)
-but=tk.Button(frame,command="")
-but.grid(column=0, row=0)
+
 
 tabDem=[]
 tabSol=[]
 loose=0
-createBoard(10,10,tabDem,tabSol,frame)
-affichage(tabDem)
-while loose!=1:
-    loose=choose(tabDem,tabSol)
-    affichage(tabDem)
+createBoard(10,10,tabDem,tabSol,frame,root)
+root.mainloop()
+# affichage(tabDem)
+# while loose!=1:
+#     loose=choose(tabDem,tabSol,,)
+#     affichage(tabDem)
+# choose(tabBomb,tabRes,ligne,colonne)
 print("yes")
 int(input("end"))
-
-
-
