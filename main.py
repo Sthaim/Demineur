@@ -19,7 +19,7 @@ def defaite(tabBomb,tabRes,root):
     print("Vous avez activer une bombe! Perdu")
     popup = tk.Tk()
     popup.geometry("200x200")
-    yup=tk.Button(popup,text="Vous avez activer une bombe!"+" Perdu",command=lambda:root.destroy())
+    yup=tk.Button(popup,text="Vous avez activer une bombe!"+" Perdu",command=lambda:[root.destroy(),popup.destroy()])
     yup.pack()
 def plusieursCase(tab,tabSol,ligne,colonne):
     for i in range(3):
@@ -53,8 +53,6 @@ def createBoard(tLigne,tColonne,tabBomb,tabRes,frame,root):
             
             tabBomb[ligne][colonne]=tk.Button(frame,text="X",command=partial(choose,tabBomb,tabRes,ligne,colonne,root),width=5)
             tabBomb[ligne][colonne].grid(column=colonne, row=ligne)
-
-            
     for ligne in range(tLigne):
         for colonne in range(tColonne):
             if tabRes[ligne][colonne]==9:
@@ -65,9 +63,10 @@ def createBoard(tLigne,tColonne,tabBomb,tabRes,frame,root):
                             b=j-1
                             if tabRes[ligne+a][colonne+b]!=9 and ligne+a!=-1 and colonne+b!=-1:
                                 tabRes[ligne+a][colonne+b]+=1
-
                 except (IndexError):
-                    pass    
+                    pass 
+            
+
 
 root = tk.Tk()
 frame = tk.Frame(root)
