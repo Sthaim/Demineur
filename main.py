@@ -48,19 +48,36 @@ def createBoard(tLigne,tColonne,tabBomb,tabRes,frame,root):
             tabBomb[ligne][colonne]=tk.Button(frame,text="X",command=partial(choose,tabBomb,tabRes,ligne,colonne,tLigne,tColonne,root),width=5)
             tabBomb[ligne][colonne].grid(column=colonne, row=ligne)
             
-def createTabSolution(tabRes,ligne,colonne,tLigne,tColonne):
-    maxBomb=int((tLigne*tColonne)/4)
+def createTabSolution(tabRes,ligneI,colonneI,tLigne,tColonne):
+    maxBomb=int((tLigne*tColonne)/5)
+    min=0
+    print(ligneI+1,colonneI+1)
     for ligne in range(tLigne):
         tabRes.append([])
         for colonne in range(tColonne):
-            tabRes[ligne].append(colonne)
-            if random.randint(0,4) == 1 and maxBomb>0:
-                # print("saucisse")
-                tabRes[ligne][colonne]=9
-                maxBomb-=1
-            else:
-                tabRes[ligne][colonne]=0
-    
+            tabRes[ligne].append(0)
+
+    for ligne in range(tLigne):
+        for colonne in range(tColonne):      
+            min=0
+            try:
+                if random.randint(0,4) == 0 and maxBomb > 0:
+                    print(maxBomb)
+                    for i in range(3):
+                        a=i-1
+                        for j in range(3):
+                            b=j-1
+                            if ligneI+1+a==5 and colonneI+1+b==5 and ligne+a!=-1 and colonne+b!=-1:
+                                tabRes[ligne][colonne]=0
+                                print("Mis à zéro")
+                            else:
+                                tabRes[ligne][colonne]=9
+                                if min==0:
+                                    maxBomb-=1
+                                    min=1
+                    # print("saucisse")
+            except (IndexError):
+                    pass 
     for ligne in range(tLigne):
         for colonne in range(tColonne):
             if tabRes[ligne][colonne]==9:
@@ -69,7 +86,7 @@ def createTabSolution(tabRes,ligne,colonne,tLigne,tColonne):
                         a=i-1
                         for j in range(3):
                             b=j-1
-                            if tabRes[ligne+a][colonne+b]!=9 and ligne+a!=-1 and colonne+b!=-1:
+                            if tabRes[ligne+a][colonne+b]!=9 and ligne+a!=-1 and colonne+b!=-1 and ligne+a<tLigne and colonne+b<tColonne:
                                 tabRes[ligne+a][colonne+b]+=1
                 except (IndexError):
                     pass 
@@ -92,3 +109,4 @@ root.mainloop()
 # choose(tabBomb,tabRes,ligne,colonne)
 print("yes")
 int(input("end"))
+
