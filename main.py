@@ -1,72 +1,95 @@
 import random
+import tkinter as tk
 
 def affichage(tab):
+    print("  [1]   [2]  [3]   [4]   [5]   [6]   [7]   [8]   [9]   [10]")
+    nLigne=1
     for i in tab:
-        print(i)
+        print(nLigne,i)
+        nLigne+=1
 
 def choose(tab,tabSol):
-    ligne=int(input("ligne"))
-    colonne=int(input("colonne"))
-    tab[ligne][colonne]=tabSol[ligne][colonne]
+    ligne=int(input("ligne"))-1
+    colonne=int(input("colonne"))-1
+    tab[ligne][colonne].config(text=tabSol[ligne][colonne])
     if tabSol[ligne][colonne]==0:
         plusieursCase(tab,tabSol,ligne,colonne)
     if tabSol[ligne][colonne]==9:
-        defaite()
+        defaite(tabSol,tab)
+        return 1
+    return 0
 
-def defaite():
-    print("Vous avez activer une bombe! Perdu")    
+def defaite(tabRes,tabBomb):
+    for ligne in range(len(tabRes)):
+        for colonne in range(len(tabRes)):
+            if tabRes[ligne][colonne]==9:
+                tabBomb[ligne][colonne]=tabRes[ligne][colonne]
+    affichage(tabBomb)
+    print("Vous avez activer une bombe! Perdu")
 
 def plusieursCase(tab,tabSol,ligne,colonne):
     for i in range(3):
         a=i-1
         for j in range(3):
             b=j-1
-            print(b)
             try:
                 if ligne+a!=-1 and colonne+b!=-1 and tab[ligne+a][colonne+b]!=tabSol[ligne+a][colonne+b]:
                     tab[ligne+a][colonne+b]=tabSol[ligne+a][colonne+b]
                     if tabSol[ligne+a][colonne+b]==0:
                         plusieursCase(tab,tabSol,ligne+a,colonne+b)
+                    # if tabSol[ligne+a][colonne+b]==9:
+                    #     defaite(tabSol,tab)
             except (IndexError,RuntimeError):
-                print(IndexError)
                 pass    
- 
+
+def createBoard(tLigne,tColonne,tabBomb,tabRes,frame):
+    maxBomb=int((tLigne*tColonne)/3)
+    for ligne in range(tLigne):
+        tabBomb.append([])
+        tabRes.append([])
+        for colonne in range(tColonne):
+            tabBomb[ligne].append(colonne)
+            tabRes[ligne].append(colonne)
+            if random.randint(0,4) == 1 and maxBomb>0:
+                # print("saucisse")
+                tabRes[ligne][colonne]=9
+                maxBomb-=1
+            else:
+                tabRes[ligne][colonne]=0
+            tabBomb[ligne][colonne]= "X"
+            
+
+    for ligne in range(tLigne):
+        for colonne in range(tColonne):
+            if tabRes[ligne][colonne]==9:
+                try:
+                    for i in range(3):
+                        a=i-1
+                        for j in range(3):
+                            b=j-1
+                            if tabRes[ligne+a][colonne+b]!=9 and ligne+a!=-1 and colonne+b!=-1:
+                                tabRes[ligne+a][colonne+b]+=1
+
+                except (IndexError):
+                    pass    
+
+root = tk.Tk()
+frame = tk.Frame(root)
+frame.pack()
+frame.grid(row=0,column=0)
+but=tk.Button(frame,command="")
+but.grid(column=0, row=0)
+
 tabDem=[]
 tabSol=[]
-maxBomb=5
-for ligne in range(5):
-    tabDem.append([])
-    tabSol.append([])
-    for colonne in range(5):
-        tabDem[ligne].append(colonne)
-        tabSol[ligne].append(colonne)
-        if random.randint(0,2) == 1 and maxBomb>0:
-            # print("saucisse")
-            tabSol[ligne][colonne]=9
-            maxBomb-=1
-        else:
-            tabSol[ligne][colonne]=0
-        tabDem[ligne][colonne]="X"
-
-for ligne in range(5):
-    for colonne in range(5):
-        if tabSol[ligne][colonne]==9:
-            try:
-                for i in range(3):
-                    a=i-1
-                    for j in range(3):
-                        b=j-1
-                        if tabSol[ligne+a][colonne+b]!=9 and ligne+a!=-1 and colonne+b!=-1:
-                            tabSol[ligne+a][colonne+b]+=1
-
-            except (IndexError):
-                print(IndexError)
-                pass    
-
-
+loose=0
+createBoard(10,10,tabDem,tabSol,frame)
 affichage(tabDem)
-choose(tabDem,tabSol)
-affichage(tabDem)
-choose(tabDem,tabSol)
-affichage(tabDem)
-print (len(tabDem))
+while loose!=1:
+    loose=choose(tabDem,tabSol)
+    affichage(tabDem)
+print("yes")
+int(input("end"))
+
+
+
