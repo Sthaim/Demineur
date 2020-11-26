@@ -20,8 +20,6 @@ def choose(tab,tabSol,ligne,colonne,tLigne,tColonne,root):
         first=0
         createTabSolution(tabSol,ligne,colonne,tLigne,tColonne)
     # colorI=tabSol[ligne][colonne]
-    print("ligne",ligne+1," colonne",colonne+1)
-    print(color[-1])
     tab[ligne][colonne].config(text=tabSol[ligne][colonne])
     if tabSol[ligne][colonne]-1==-1 and tabSol[ligne][colonne]!=9:
         tab[ligne][colonne].config(fg="black")
